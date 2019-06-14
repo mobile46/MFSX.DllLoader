@@ -42,3 +42,6 @@ MFSX.DllLoader is licensed under the MIT License - see the [LICENSE](LICENSE) fi
 ## Credits
 - [Akaion](https://github.com/Akaion) for the [Simple-Injector](https://github.com/Akaion/Simple-Injector)  
 - [Icon8](https://icons8.com) for the [Syringe Icon](https://icons8.com/icon/set/syringe/windows)  
+- [Yildo](http://www.decompile.us/forum/murid-yildo)  
+- [Cyber](http://www.decompile.us/forum/murid-cyber)  
+- [Forensic](http://www.decompile.us/forum/murid-Forensic)  
