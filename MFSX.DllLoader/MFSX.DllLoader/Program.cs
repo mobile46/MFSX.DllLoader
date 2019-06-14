@@ -13,7 +13,6 @@ namespace MFSX.DllLoader
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        private const int SW_HIDE = 0;
         private static readonly char RandomChar = GetRandomCharacter();
 
         private static void Main(string[] args)
@@ -28,66 +27,28 @@ namespace MFSX.DllLoader
 
                 IniFile myIni = new IniFile(filePath);
 
-                if (!myIni.KeyExists("ProcessName"))
-                {
-                    myIni.Write("ProcessName", "fileName.exe");
-                }
-
-                if (!myIni.KeyExists("DllName"))
-                {
-                    myIni.Write("DllName", "version.dll");
-                }
-
-                if (!myIni.KeyExists("InjectionMethod"))
-                {
-                    myIni.Write("InjectionMethod", "1");
-                }
-
-                if (!myIni.KeyExists("RunProcessAsAdmin"))
-                {
-                    myIni.Write("RunProcessAsAdmin", "0");
-                }
-
-                if (!myIni.KeyExists("HideWindow"))
-                {
-                    myIni.Write("HideWindow", "0");
-                }
-
                 if (!File.Exists(filePath))
                 {
                     Log($"{Path.GetFileName(filePath)} file is not found!");
                     goto exit;
                 }
 
-                string hideWindowText = myIni.Read("HideWindow");
-
-                StringToBool(hideWindowText, ref hideWindow);
+                hideWindow = StringToBool(myIni.Read("HideWindow"));
 
                 if (hideWindow)
                 {
-                    var handle = GetConsoleWindow();
-                    ShowWindow(handle, SW_HIDE);
+                    ShowWindow(GetConsoleWindow(), 0);
                 }
 
-                string runProcessAsAdminText = myIni.Read("ProcessName");
-
-                bool runProcessAsAdmin = false;
-
-                StringToBool(runProcessAsAdminText, ref runProcessAsAdmin);
+                bool runProcessAsAdmin = StringToBool(myIni.Read("RunProcessAsAdmin"));
 
                 string processName = currentPath + myIni.Read("ProcessName");
 
-                if (!processName.EndsWith(".exe"))
-                {
-                    processName += ".exe";
-                }
+                AppendExtension(ref processName, ".exe");
 
                 string dllName = currentPath + myIni.Read("DllName");
 
-                if (!dllName.EndsWith(".dll"))
-                {
-                    dllName += ".dll";
-                }
+                AppendExtension(ref dllName, ".dll");
 
                 if (File.Exists(dllName))
                 {
@@ -96,7 +57,7 @@ namespace MFSX.DllLoader
                     string injectionMethod = myIni.Read("InjectionMethod");
 
                     string injectionMethodText;
-                    switch (injectionMethod)
+                    switch (injectionMethod.ToLower())
                     {
                         case "1":
                         case "createremotethread":
@@ -126,11 +87,7 @@ namespace MFSX.DllLoader
 
                         if (runProcessAsAdmin)
                         {
-                            Process proc = new Process
-                            {
-                                StartInfo = { FileName = filePath, UseShellExecute = true, Verb = "runas" }
-                            };
-                            proc.Start();
+                            new Process { StartInfo = new ProcessStartInfo(processName) { Verb = "runas" } }.Start();
 
                             Log($"{Path.GetFileName(processName)} started as administrator!");
                         }
@@ -162,27 +119,25 @@ namespace MFSX.DllLoader
             {
                 if (!hideWindow)
                 {
-                    Log("Press any key to continue...");
+                    Log("Press any key to exit...");
                     Console.ReadKey();
                 }
             }
 
-        exit:
+            exit:
             Environment.Exit(0);
         }
 
-        private static void StringToBool(string text, ref bool value)
+        private static bool StringToBool(string text)
         {
             switch (text.ToLower())
             {
                 case "1":
                 case "true":
-                    value = true;
-                    break;
+                    return true;
 
                 default:
-                    value = false;
-                    break;
+                    return false;
             }
         }
 
@@ -192,19 +147,27 @@ namespace MFSX.DllLoader
             return text[new Random().Next(text.Length)];
         }
 
+        private static void AppendExtension(ref string text, string suffix)
+        {
+            if (!text.EndsWith(suffix))
+            {
+                text += suffix;
+            }
+        }
+
         private static void Log(string text)
         {
             Console.WriteLine($"[{RandomChar}] {text}");
         }
 
-        private static void LogFileNotFound(string fileName)
-        {
-            Log($"{Path.GetFileName(fileName)} file is not found!");
-        }
-
         private static void LogFileFound(string fileName)
         {
             Log($"{Path.GetFileName(fileName)} file is found!");
+        }
+
+        private static void LogFileNotFound(string fileName)
+        {
+            Log($"{Path.GetFileName(fileName)} file is not found!");
         }
     }
 }

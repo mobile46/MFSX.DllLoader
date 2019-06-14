@@ -17,6 +17,31 @@ namespace MFSX.DllLoader
         public IniFile(string iniPath = null)
         {
             _path = new FileInfo(iniPath).FullName;
+
+            if (!KeyExists("ProcessName"))
+            {
+                Write("ProcessName", "fileName.exe");
+            }
+
+            if (!KeyExists("DllName"))
+            {
+                Write("DllName", "version.dll");
+            }
+
+            if (!KeyExists("InjectionMethod"))
+            {
+                Write("InjectionMethod", "1");
+            }
+
+            if (!KeyExists("RunProcessAsAdmin"))
+            {
+                Write("RunProcessAsAdmin", "0");
+            }
+
+            if (!KeyExists("HideWindow"))
+            {
+                Write("HideWindow", "0");
+            }
         }
 
         public string Read(string key)
