@@ -15,10 +15,11 @@ namespace MFSX.DllLoader
 
         private static readonly char RandomChar = GetRandomCharacter();
 
+        private static bool hideWindow = false;
+
         private static void Main(string[] args)
         {
-            Console.Title = "MFSX Dll Loader v1.0 by Mobile46";
-            bool hideWindow = false;
+            Console.Title = "MFSX Dll Loader v1.1 by Mobile46";
 
             try
             {
@@ -104,6 +105,19 @@ namespace MFSX.DllLoader
                         goto exit;
                     }
 
+                    int waitBeforeInjection = 0;
+
+                    if (!int.TryParse(myIni.Read("WaitBeforeInjection"), out waitBeforeInjection))
+                    {
+                        Log("Invalid WaitBeforeInjection value! It must be a integer (1000 ms == 1 sec)");
+                    }
+
+                    if (waitBeforeInjection != 0)
+                    {
+                        Log($"Waiting {waitBeforeInjection * 0.001} second(s) before injection!");
+                        System.Threading.Thread.Sleep(waitBeforeInjection);
+                    }
+
                     Log(MFSX.Inject(processName, dllName, injectionMethod) ? "Dll injection process is successful!" : "Dll injection process is failed!");
                 }
                 else
@@ -157,7 +171,10 @@ namespace MFSX.DllLoader
 
         private static void Log(string text)
         {
-            Console.WriteLine($"[{RandomChar}] {text}");
+            if (!hideWindow)
+            {
+                Console.WriteLine($"[{RandomChar}] {text}");
+            }
         }
 
         private static void LogFileFound(string fileName)

@@ -15,6 +15,7 @@ DllName=version.dll
 InjectionMethod=1
 RunProcessAsAdmin=0
 HideWindow=0
+WaitBeforeInjection=0
 ```
 
 ProcessName (Target process name)
@@ -32,9 +33,12 @@ RunProcessAsAdmin (Run target process as admin)
  - True (1)
  - False (0)
 
-HideWindow (Hide console window when you run MFSX.DllLoader.exe)
+HideWindow (Hide console window when you run DllLoader.exe)
 - True (1)
 - False (0)
+
+WaitBeforeInjection (Wait X sec before injection)
+- Default value is 0 ms
 
 # License
 MFSX.DllLoader is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

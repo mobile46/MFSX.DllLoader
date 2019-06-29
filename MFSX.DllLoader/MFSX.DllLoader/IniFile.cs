@@ -42,6 +42,11 @@ namespace MFSX.DllLoader
             {
                 Write("HideWindow", "0");
             }
+
+            if (!KeyExists("WaitBeforeInjection"))
+            {
+                Write("WaitBeforeInjection", "0");
+            }
         }
 
         public string Read(string key)
